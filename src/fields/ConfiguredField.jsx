@@ -52,6 +52,9 @@ export class RawConfiguredField extends React.Component {
     return (
       <FormControl
         error={errors && errors.length > 0}
+        fullWidth
+        variant="outlined"
+        size="small"
         className={classNames(classes.root, {
           [classes.withLabel]: LabelComponent
         })}
