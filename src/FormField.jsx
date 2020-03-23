@@ -7,10 +7,20 @@ import styles from './form-field-styles';
 
 // exported for unit testing
 export class RawFormField extends React.Component {
-  shouldComponentUpdate = nextProps => !isEqual(this.props.data, nextProps.data)
+  shouldComponentUpdate = nextProps =>
+    !isEqual(this.props.data, nextProps.data) ||
+    !isEqual(this.props.errors, nextProps.errors);
 
   render() {
-    const { classes, schema, data, uiSchema = {}, onChange, path, ...rest } = this.props;
+    const {
+      classes,
+      schema,
+      data,
+      uiSchema = {},
+      onChange,
+      path,
+      ...rest
+    } = this.props;
     const { type } = schema;
     if (type === 'object' || type === 'array') {
       return (

@@ -1,26 +1,26 @@
 export default theme => ({
   root: {
     '&$withLabel': {
-      marginTop: theme.spacing.unit * 3,
-    },
+      margin: `${theme.spacing(2)}px 0`
+    }
   },
   textarea: {
     '& textarea': {
-      height: 'initial',
-    },
+      height: 'initial'
+    }
   },
   description: {
-    transform: `translateX(-${theme.spacing.unit * 2}px)`,
+    transform: `translateX(-${theme.spacing(2)}px)`,
     fontSize: '80%',
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[500]
   },
   withLabel: {},
   label: {
     height: '1rem',
     display: 'inline-flex',
     justifyContent: 'center',
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
   // infoButton: {},
   // infoPopover: {}
 });

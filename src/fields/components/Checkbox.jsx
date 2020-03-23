@@ -4,11 +4,19 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const doOnChange = onChange => (e, checked) => onChange(checked);
 
-export default ({ path, label, value, type, onChange, ...rest }) => (
+export default ({
+  path,
+  label,
+  value,
+  type,
+  onChange,
+  labelWidth,
+  ...rest
+}) => (
   <FormControlLabel
     control={
-    <Checkbox
-        checked={value}
+      <Checkbox
+        checked={!!value}
         value={path}
         onChange={doOnChange(onChange)}
         {...rest}

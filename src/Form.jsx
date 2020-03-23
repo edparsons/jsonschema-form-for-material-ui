@@ -20,13 +20,24 @@ class Form extends React.Component {
     uiSchema: {},
     showErrorList: false,
     showHelperError: true,
+    showFormButtons: true,
     ErrorList: DefaultErrorList
   };
 
   state = {
     data: this.props.formData,
-    errors: getValidationResult(this.props.schema, this.props.formData),
+    errors: getValidationResult(this.props.schema, this.props.formData, false),
+    isSubmitted: false,
     id: generate()
+  };
+
+  componentDidMount = () => {
+    // Send all functions in an object if action param is set.
+    if (this.props.action) {
+      this.props.action({
+        submit: this.onSubmit
+      });
+    }
   };
 
   componentWillReceiveProps = nextProps => {
@@ -34,7 +45,11 @@ class Form extends React.Component {
     if (!isEqual(nextProps.schema, this.props.schema)) {
       errors = {};
     } else {
-      errors = getValidationResult(this.props.schema, nextProps.formData);
+      errors = getValidationResult(
+        this.props.schema,
+        nextProps.formData,
+        this.state.isSubmitted
+      );
     }
     this.setState({
       errors,
@@ -48,7 +63,11 @@ class Form extends React.Component {
     this.setState(
       {
         data,
-        errors: getValidationResult(this.props.schema, data)
+        errors: getValidationResult(
+          this.props.schema,
+          data,
+          this.state.isSubmitted
+        )
       },
       this.notifyChange
     );
@@ -87,7 +106,12 @@ class Form extends React.Component {
   onSubmit = () => {
     const { onSubmit } = this.props;
     const { data } = this.state;
-    onSubmit({ formData: data });
+    const errors = getValidationResult(this.props.schema, data, true);
+    this.setState({
+      isSubmitted: true,
+      errors
+    });
+    onSubmit({ formData: data, errors });
   };
 
   notifyChange = () => {
@@ -108,8 +132,10 @@ class Form extends React.Component {
       cancelText,
       submitText,
       showErrorList,
+      showFormButtons,
       ErrorList,
       buttonProps,
+      actions,
       ...rest
     } = this.props;
     const { errors, id, data } = this.state;
@@ -132,15 +158,17 @@ class Form extends React.Component {
             {...rest}
           />
         </div>
-        <FormButtons
-          onSubmit={this.onSubmit}
-          hasExternalOnSubmit={!!onSubmit}
-          onCancel={onCancel}
-          classes={classes}
-          cancelText={cancelText}
-          submitText={submitText}
-          buttonProps={buttonProps}
-        />
+        {showFormButtons ? (
+          <FormButtons
+            onSubmit={this.onSubmit}
+            hasExternalOnSubmit={!!onSubmit}
+            onCancel={onCancel}
+            classes={classes}
+            cancelText={cancelText}
+            submitText={submitText}
+            buttonProps={buttonProps}
+          />
+        ) : null}
       </Paper>
     );
   }
@@ -159,6 +187,7 @@ Form.propTypes = {
   cancelText: PropTypes.string,
   submitText: PropTypes.string,
   showErrorList: PropTypes.bool,
+  showFormButtons: PropTypes.bool,
   showHelperError: PropTypes.bool,
-  ErrorList: PropTypes.func
+  ErrorList: PropTypes.any
 };

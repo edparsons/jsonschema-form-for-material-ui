@@ -1,5 +1,5 @@
 // import Input, { InputLabel } from 'material-ui/Input'; // eslint-disable-line import/no-named-default
-const Input = require('@material-ui/core/Input').default;
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 
 const { RadioGroup, Select, Checkbox } = require('../components');
 
@@ -19,5 +19,5 @@ export default ({ schema, uiSchema = {} }) => {
   if (type === 'boolean') {
     return Checkbox;
   }
-  return Input;
+  return OutlinedInput;
 };

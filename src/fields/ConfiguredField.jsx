@@ -4,8 +4,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Input from '@material-ui/core/Input';
-
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
@@ -15,9 +14,27 @@ import fieldStyles from './field-styles';
 
 // for unit testing only
 export class RawConfiguredField extends React.Component {
-  shouldComponentUpdate = nextProps => {
-    const { data } = this.props;
-    if (data !== nextProps.data) {
+  constructor(props) {
+    super(props);
+    this.labelRef = React.createRef();
+    this.state = {
+      labelWidth: 0
+    };
+  }
+
+  componentDidMount() {
+    if (this.labelRef.current) {
+      this.setState({ labelWidth: this.labelRef.current.offsetWidth });
+    }
+  }
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    const { data, errors } = this.props;
+    if (
+      data !== nextProps.data ||
+      errors !== nextProps.errors ||
+      nextState.labelWidth !== this.state.labelWidth
+    ) {
       return true;
     }
     return false;
@@ -36,7 +53,7 @@ export class RawConfiguredField extends React.Component {
       descriptionText,
       helpText: helpT,
       showHelperError,
-      Component = Input,
+      Component = OutlinedInput,
       LabelComponent,
       labelComponentProps = {},
       title,
@@ -45,6 +62,7 @@ export class RawConfiguredField extends React.Component {
       id,
       errors
     } = this.props;
+    const { labelWidth } = this.state;
     const helpText =
       showHelperError && errors && errors.length > 0
         ? this.formatErrorMessages()
@@ -60,7 +78,11 @@ export class RawConfiguredField extends React.Component {
         })}
       >
         {LabelComponent && title && (
-          <LabelComponent className={classes.label} {...labelComponentProps}>
+          <LabelComponent
+            ref={this.labelRef}
+            className={classes.label}
+            {...labelComponentProps}
+          >
             {title}
             {descriptionText ? (
               <Tooltip title={descriptionText} placement="top-start">
@@ -83,6 +105,7 @@ export class RawConfiguredField extends React.Component {
           value={data || ''}
           id={labelComponentProps.htmlFor}
           type={type}
+          labelWidth={labelWidth}
           {...componentProps}
         />
         <FormHelperText id={`${id}-help`}>{helpText}</FormHelperText>
